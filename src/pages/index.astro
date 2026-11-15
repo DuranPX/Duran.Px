@@ -1,0 +1,124 @@
+---
+import ProjectCard from "../components/projects/ProjectCard.astro";
+import SpotifyWidget from "../components/integrations/SpotifyWidget.astro";
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { projects } from "../data/projects";
+import {
+  developingKnowledge,
+  focusAreas,
+  siteConfig,
+} from "../data/site";
+import type { SpotifyResponse } from "../lib/spotify";
+
+const featuredProjects = projects.filter((project) => project.featured);
+const spotifyUnavailable: SpotifyResponse = {
+  status: "unavailable",
+  reason: "not_configured",
+};
+---
+
+<SiteLayout currentPath="/" description={siteConfig.description}>
+  <section class="hero section-wrap">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="eyebrow-dot"></span> {siteConfig.location}</p>
+      <h1>Construyo software <span>con estructura y propósito.</span></h1>
+      <p class="hero-intro">
+        Soy Juan Durán, estudiante de Ingeniería. Me interesa conectar backend,
+        datos e interfaces para resolver problemas concretos, sin añadir complejidad
+        porque sí.
+      </p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="/projects/">
+          Ver proyectos <span aria-hidden="true">↗</span>
+        </a>
+        <a class="button button-quiet" href="/contact/">Contactarme</a>
+      </div>
+      <p class="hero-caption mono">ESTUDIANTE DE INGENIERÍA <span>/</span> BACKEND + FULL-STACK</p>
+    </div>
+    <div class="hero-visual" aria-label="Monograma JD y áreas de enfoque">
+      <div class="orbit orbit-one"></div>
+      <div class="orbit orbit-two"></div>
+      <div class="hero-monogram">JD<span>.</span></div>
+      <div class="visual-note visual-note-top mono">SISTEMAS QUE CONECTAN</div>
+      <div class="visual-note visual-note-bottom">
+        <span class="note-index mono">01—05</span>
+        <span>APIs · datos · experiencia</span>
+      </div>
+      <span class="visual-coordinate mono">COLOMBIA<br />PORTAFOLIO / 01</span>
+    </div>
+  </section>
+
+  <section class="intro-strip section-wrap" aria-label="Áreas de enfoque">
+    <p class="mono strip-label">ENFOQUE</p>
+    <ul class="focus-list">
+      {focusAreas.map((area) => <li>{area}</li>)}
+    </ul>
+  </section>
+
+  <section class="section-block section-wrap" aria-labelledby="projects-heading">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow mono">01 / TRABAJO SELECCIONADO</p>
+        <h2 id="projects-heading">Proyectos con contexto.</h2>
+      </div>
+      <a class="text-link section-heading-link" href="/projects/">
+        Ver todos <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+    <div class="project-grid">
+      {featuredProjects.map((project, index) => <ProjectCard project={project} index={index} />)}
+    </div>
+  </section>
+
+  <section class="about-band section-wrap" aria-labelledby="about-heading">
+    <div class="about-band-label">
+      <p class="eyebrow mono">02 / PERFIL</p>
+      <span class="about-stamp" aria-hidden="true">JD</span>
+    </div>
+    <div class="about-band-copy">
+      <h2 id="about-heading">Curiosidad por lo que pasa detrás de cada interfaz.</h2>
+      <p>
+        Estudio Ingeniería en la Universidad de Caldas y sigo aprendiendo sobre
+        arquitectura, seguridad, bases de datos y redes a través de proyectos
+        académicos y personales.
+      </p>
+      <a class="text-link" href="/about/">Conocer mi perfil <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+  <section class="skills-section section-wrap" aria-labelledby="skills-heading">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow mono">03 / HERRAMIENTAS Y APRENDIZAJE</p>
+        <h2 id="skills-heading">Tecnología con contexto.</h2>
+      </div>
+      <p class="section-aside">Lo que aparece aquí se entiende mejor junto a los proyectos.</p>
+    </div>
+    <div class="skill-columns">
+      <div>
+        <h3>Experiencia práctica en proyectos</h3>
+        <ul class="skill-cloud">
+          {["Java", "JavaScript / TypeScript", "Python", "Node.js", "NestJS", "Spring Boot", "React", "Vite", "Next.js", "Flask", "MongoDB", "MySQL / SQL", "Supabase", "Docker", "Git", "Postman"].map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+      <div class="developing-list">
+        <h3>Conocimientos en desarrollo</h3>
+        <ul>
+          {developingKnowledge.map((item) => <li><span aria-hidden="true">↳</span>{item}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-banner section-wrap" aria-labelledby="contact-heading">
+    <div>
+      <p class="eyebrow mono">04 / SIGUIENTE CONVERSACIÓN</p>
+      <h2 id="contact-heading">¿Hablamos de una idea?</h2>
+    </div>
+    <a class="button button-primary" href="/contact/">
+      Ir a contacto <span aria-hidden="true">↗</span>
+    </a>
+  </section>
+
+  {siteConfig.spotifyEnabled && <SpotifyWidget response={spotifyUnavailable} />}
+</SiteLayout>

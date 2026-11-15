@@ -1,0 +1,36 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { siteConfig } from "../data/site";
+---
+
+<SiteLayout
+  currentPath="/contact/"
+  title="Contacto — Juan Durán"
+  description="Correo, GitHub y LinkedIn para conversar con Juan Durán."
+>
+  <section class="page-hero contact-page-hero section-wrap">
+    <p class="eyebrow mono">CONTACTO / MANIZALES, COLOMBIA</p>
+    <h1>Una conversación <span>puede ser un buen comienzo.</span></h1>
+    <p class="page-intro">
+      Si quieres hablar de un proyecto, una oportunidad o una idea, puedes
+      escribirme directamente.
+    </p>
+    <a class="contact-email" href={`mailto:${siteConfig.email}`}>{siteConfig.email} <span aria-hidden="true">↗</span></a>
+  </section>
+
+  <section class="section-block section-wrap contact-links-section" aria-label="Otros enlaces">
+    <a class="contact-link-card" href={siteConfig.github} target="_blank" rel="noreferrer">
+      <span class="mono">01 / CÓDIGO</span>
+      <strong>GitHub</strong>
+      <span class="contact-link-url">github.com/DuranPX <span aria-hidden="true">↗</span></span>
+    </a>
+    <a class="contact-link-card" href={siteConfig.linkedin} target="_blank" rel="noreferrer">
+      <span class="mono">02 / PERFIL</span>
+      <strong>LinkedIn</strong>
+      <span class="contact-link-url">linkedin.com/in/duranpx <span aria-hidden="true">↗</span></span>
+    </a>
+  </section>
+  <p class="section-wrap pending-note contact-confirmation">
+    Confirmar que estos perfiles y enlaces estén actualizados antes de publicar.
+  </p>
+</SiteLayout>

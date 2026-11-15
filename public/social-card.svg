@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="background" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#101a2b"/>
+      <stop offset="1" stop-color="#080d19"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <circle cx="1010" cy="190" r="350" fill="url(#glow)"/>
+  <path d="M0 525h1200" stroke="#a7b4c8" stroke-opacity=".14"/>
+  <circle cx="1050" cy="110" r="2" fill="#f59e0b"/>
+  <text x="92" y="130" fill="#a7b4c8" font-family="monospace" font-size="20" letter-spacing="3">MANIZALES, COLOMBIA</text>
+  <text x="82" y="365" fill="#e8eef8" font-family="Arial, sans-serif" font-size="182" font-weight="700" letter-spacing="-14">JD<tspan fill="#38bdf8">.</tspan></text>
+  <text x="99" y="445" fill="#e8eef8" font-family="Arial, sans-serif" font-size="34">Juan Durán</text>
+  <text x="99" y="493" fill="#a7b4c8" font-family="Arial, sans-serif" font-size="24">Engineering Student · Backend-oriented Full-Stack Developer</text>
+  <text x="1000" y="552" fill="#75839b" font-family="monospace" font-size="16" letter-spacing="2">PORTFOLIO / 01</text>
+</svg>

@@ -1,0 +1,44 @@
+---
+import type { SpotifyResponse } from "../../lib/spotify";
+
+interface Props {
+  response: SpotifyResponse;
+}
+
+const { response } = Astro.props;
+const isPlaying = response.status === "playing";
+const message =
+  response.status === "playing"
+    ? `${response.track.title} — ${response.track.artist}`
+    : response.status === "idle"
+      ? "No hay reproducción activa."
+      : response.status === "unavailable"
+        ? "Integración no configurada."
+        : "No fue posible consultar la reproducción.";
+---
+
+<aside class="spotify-widget" aria-label="Estado de Spotify">
+  {
+    response.status === "playing" && response.track.coverUrl && (
+      <img
+        class="spotify-cover"
+        src={response.track.coverUrl}
+        alt={`Carátula del álbum ${response.track.album}`}
+        loading="lazy"
+      />
+    )
+  }
+  <span class:list={["spotify-indicator", { "is-playing": isPlaying }]} aria-hidden="true"></span>
+  <div>
+    <p class="mono widget-label">AHORA EN SPOTIFY</p>
+    <p class="spotify-message">{message}</p>
+    {response.status === "playing" && <p class="spotify-album">{response.track.album}</p>}
+  </div>
+  {
+    response.status === "playing" && response.track.spotifyUrl && (
+      <a class="text-link" href={response.track.spotifyUrl} target="_blank" rel="noreferrer">
+        Abrir <span aria-hidden="true">↗</span>
+      </a>
+    )
+  }
+</aside>

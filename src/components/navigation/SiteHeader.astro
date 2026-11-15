@@ -1,0 +1,35 @@
+---
+import { siteConfig } from "../../data/site";
+
+const { currentPath = "/" } = Astro.props;
+
+const links = [
+  { href: "/", label: "Inicio" },
+  { href: "/projects/", label: "Proyectos" },
+  { href: "/about/", label: "Perfil" },
+  { href: "/contact/", label: "Contacto" },
+];
+---
+
+<header class="site-header">
+  <a class="brand" href="/" aria-label={`${siteConfig.name}, inicio`}>
+    <span class="brand-mark" aria-hidden="true">{siteConfig.monogram}</span>
+    <span class="brand-name">{siteConfig.name}</span>
+  </a>
+  <nav class="site-nav" aria-label="Navegación principal">
+    {
+      links.map(({ href, label }) => (
+        <a
+          href={href}
+          aria-current={currentPath === href ? "page" : undefined}
+          class="nav-link"
+        >
+          {label}
+        </a>
+      ))
+    }
+  </nav>
+  <a class="header-contact" href="/contact/">
+    Hablemos <span aria-hidden="true">↗</span>
+  </a>
+</header>
