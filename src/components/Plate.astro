@@ -1,0 +1,29 @@
+---
+/**
+ * Lámina neutral 16:10 que ocupa el lugar de una captura pendiente.
+ * Mantiene las mismas dimensiones que la imagen final, así el layout no cambia al reemplazarla.
+ */
+import Todo from "./Todo.astro";
+import { attr, ui } from "../i18n";
+
+interface Props {
+  title: string;
+  caption?: string;
+  captionEn?: string;
+}
+const { title, caption, captionEn } = Astro.props;
+const label = (prefix: string, cap?: string) => `${prefix} ${title}${cap ? `: ${cap}` : ""}`;
+---
+
+<div class="plate" role="img" {...attr("aria-label", label(ui.pendingShot.es, caption), label(ui.pendingShot.en, captionEn ?? caption))}>
+  <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.2">
+    <circle cx="1220" cy="420" r="260" />
+    <circle cx="1220" cy="420" r="210" stroke-opacity=".5" />
+    <path d="M0 860h1600M0 140h1600" stroke-opacity=".5" />
+    <path d="M140 0v1000" stroke-opacity=".5" />
+  </svg>
+  <Todo label={`captura 1600×1000${caption ? ` · ${caption}` : ""}`} />
+  <div class="plate__label">
+    <span class="plate__title">{title}</span>
+  </div>
+</div>

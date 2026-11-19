@@ -1,0 +1,90 @@
+---
+import { profile } from "../data/profile";
+import { profileEn } from "../i18n/en";
+import { attr, ui } from "../i18n";
+import Icon from "./Icon.astro";
+import Todo from "./Todo.astro";
+import T from "./T.astro";
+
+const cvRequest = (l: "es" | "en") => `mailto:${profile.email}?subject=${encodeURIComponent(ui.requestCvSubject[l])}`;
+const ext = (name: string) => attr("aria-label", `${name} (${ui.newTab.es})`, `${name} (${ui.newTab.en})`);
+---
+
+<section class="hero" id="inicio" aria-labelledby="hero-title">
+  <div class="hero__glow" aria-hidden="true"></div>
+  <div class="hero__lines" aria-hidden="true"></div>
+
+  <div class="wrap hero__grid">
+    <div class="hero__text">
+      <p class="hero__eyebrow meta">
+        <span>DuranPx</span><span class="dot" aria-hidden="true">·</span><span><T {...ui.portfolio} /></span><span class="dot hide-sm" aria-hidden="true">·</span><span class="hide-sm">{profile.location}</span>
+      </p>
+
+      <div class="hero__id">
+        <h1 class="hero__title" id="hero-title">
+          Juan <em class="italic">Durán</em>
+        </h1>
+        <img
+          class="hero__avatar"
+          src={profile.portrait.src}
+          alt=""
+          width="96"
+          height="96"
+          decoding="async"
+        />
+      </div>
+      <p class="hero__headline"><T es={profile.headline} en={profileEn.headline} /></p>
+      <p class="hero__tagline italic"><T es={profile.tagline} en={profileEn.tagline} /></p>
+      <p class="hero__intro"><T es={profile.intro} en={profileEn.intro} /></p>
+
+      <ul class="hero__contact" {...attr("aria-label", ui.directContact.es, ui.directContact.en)}>
+        <li><Icon name="mail" /><a class="link-line" href={`mailto:${profile.email}`}>{profile.email}</a></li>
+        <li><Icon name="pin" />{profile.location}</li>
+      </ul>
+
+      <div class="hero__actions">
+        <a class="btn btn--solid" href="#proyectos"><T {...ui.viewProjects} /> <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="btn" href="#contacto"><T {...ui.contact} /></a>
+        {profile.cv.available ? (
+          <a class="link-line" href={profile.cv.file} download><T {...ui.downloadCv} /> <Icon name="download" /></a>
+        ) : (
+          <>
+            <a class="link-line" href={cvRequest("es")} data-l="es">{ui.requestCv.es}</a>
+            <a class="link-line" href={cvRequest("en")} data-l="en" lang="en">{ui.requestCv.en}</a>
+          </>
+        )}
+      </div>
+
+      <ul class="socials" {...attr("aria-label", ui.profiles.es, ui.profiles.en)}>
+        <li><a href={profile.github} target="_blank" rel="noopener noreferrer" {...ext("GitHub")}><Icon name="github" /></a></li>
+        <li><a href={profile.linkedin} target="_blank" rel="noopener noreferrer" {...ext("LinkedIn")}><Icon name="linkedin" /></a></li>
+        <li><a href={`mailto:${profile.email}`} {...attr("aria-label", `${ui.email.es}: ${profile.email}`, `${ui.email.en}: ${profile.email}`)}><Icon name="mail" /></a></li>
+        {profile.credly && (
+          <li><a href={profile.credly} target="_blank" rel="noopener noreferrer" {...ext("Credly")}><Icon name="credly" /></a></li>
+        )}
+      </ul>
+    </div>
+
+    <figure class="portrait" style="margin:0">
+      <div class="portrait__ring" aria-hidden="true">
+        <svg viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="99.5" />
+          <circle class="arc" cx="100" cy="100" r="99.5" pathLength="100" stroke-dasharray="9 91" stroke-dashoffset="-58" />
+          <circle class="dot" cx="100" cy="0.5" r="2" transform="rotate(-29 100 100)" />
+        </svg>
+      </div>
+      <div class="portrait__frame">
+        <img
+          src={profile.portrait.src}
+          {...(profile.portrait.isPlaceholder ? { alt: "" } : attr("alt", profile.portrait.alt, profileEn.portraitAlt))}
+          width={profile.portrait.width}
+          height={profile.portrait.height}
+          fetchpriority="high"
+          decoding="async"
+        />
+        {profile.portrait.isPlaceholder && <span class="portrait__todo"><Todo label="retrato 1:1" /></span>}
+      </div>
+      <figcaption class="portrait__caption meta">{profile.university} — {profile.location}</figcaption>
+    </figure>
+  </div>
+</section>

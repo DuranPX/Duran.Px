@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Juan Durán — Systems &amp; Software Engineer</title>
+  
+  <!-- Tailwind CSS CDN with plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  
+  <!-- Font Awesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+  
+  <!-- Inter & Space Grotesk Google Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+
+  <script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            obsidian: '#07080a',
+            carbon: '#0e1117',
+            surface: '#131720',
+            subtle: '#1a202c',
+            accent: '#3b82f6',
+            glow: '#60a5fa',
+          },
+          boxShadow: {
+            'glow-subtle': '0 0 50px -15px rgba(59, 130, 246, 0.18)',
+            'glow-emerald': '0 0 40px -15px rgba(16, 185, 129, 0.2)',
+            'card-glass': 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.08)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Visual Styles -->
+  <style data-purpose="custom-layout">
+    body {
+      background-color: #07080a;
+      color: #cbd5e1;
+      overflow-x: hidden;
+      selection-background-color: #3b82f6;
+      selection-color: #ffffff;
+    }
+    
+    /* Sleek micro-grid background matching reference */
+    .bg-grid-pattern {
+      background-size: 36px 36px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+
+    /* Ambient radial glow */
+    .radial-top-glow {
+      background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.09) 0%, rgba(99, 102, 241, 0.04) 40%, transparent 70%);
+    }
+
+    /* Custom subtle glass border effect */
+    .glass-card {
+      background: linear-gradient(180deg, rgba(19, 23, 32, 0.82) 0%, rgba(11, 14, 19, 0.96) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+    }
+    
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    /* Smooth animated pill hover */
+    .pill-hover {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .pill-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px -6px rgba(0, 0, 0, 0.6);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #07080a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e2638;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #2d3748;
+    }
+
+    /* Timeline line styling */
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      top: 15px;
+      bottom: 15px;
+      left: 11px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(59, 130, 246, 0.6) 0%, rgba(16, 185, 129, 0.5) 50%, rgba(168, 85, 247, 0.4) 100%);
+    }
+
+    @media (min-width: 768px) {
+      .timeline-container::before {
+        left: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-obsidian font-sans antialiased text-slate-300 selection:bg-blue-600 selection:text-white relative min-h-screen">
+
+  <!-- Ambient lighting layer -->
+  <div class="fixed inset-0 pointer-events-none bg-grid-pattern z-0 opacity-80" data-purpose="background-grid"></div>
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[520px] radial-top-glow pointer-events-none z-0" data-purpose="ambient-lighting"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- BEGIN: TopNavigation -->
+  <header class="sticky top-5 z-40 px-4 max-w-6xl mx-auto flex items-center justify-between pointer-events-auto" data-purpose="site-header">
+    <!-- Brand / Status Pill -->
+    <a class="flex items-center gap-2.5 px-4 py-2 rounded-full glass-card border border-white/10 text-xs font-mono tracking-tight text-slate-200 pill-hover shadow-lg" href="#">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+      </span>
+      <span class="font-semibold text-white tracking-wide">Juan Durán</span>
+      <span class="text-slate-500 hidden sm:inline">/</span>
+      <span class="text-slate-400 hidden sm:inline">Systems Engineer</span>
+    </a>
+
+    <!-- Navigation Capsule -->
+    <nav class="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-full glass-card border border-white/10 text-xs font-medium text-slate-300 shadow-xl" data-purpose="nav-links">
+      <a class="px-3.5 py-1.5 rounded-full hover:text-white hover:bg-white/5 transition" href="#work">Work</a>
+      <a class="px-3.5 py-1.5 rounded-full hover:text-white hover:bg-white/5 transition" href="#experience">Experience</a>
+      <a class="px-3.5 py-1.5 rounded-full hover:text-white hover:bg-white/5 transition" href="#stack">Stack</a>
+      <a class="px-3.5 py-1.5 rounded-full hover:text-white hover:bg-white/5 transition" href="#certifications">Certifications</a>
+      <a class="px-3.5 py-1.5 rounded-full hover:text-white hover:bg-white/5 transition" href="#contact">Contact</a>
+    </nav>
+
+    <!-- Quick Action / Email Capsule -->
+    <div class="flex items-center gap-2">
+      <a class="flex items-center gap-2 px-4 py-2 rounded-full bg-white text-black text-xs font-semibold hover:bg-slate-200 transition-all shadow-md group" href="mailto:juandaduran3030@gmail.com">
+        <i class="fa-regular fa-envelope text-[11px] group-hover:scale-110 transition-transform"></i>
+        <span>Get in touch</span>
+      </a>
+    </div>
+  </header>
+  <!-- END: TopNavigation -->
+
+  <!-- BEGIN: HeroSection -->
+  <section class="relative z-10 pt-16 md:pt-20 pb-16 px-4 max-w-6xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-start">
+      <!-- Left Column: Headline & Bio -->
+      <div class="lg:col-span-8 flex flex-col justify-center">
+        <!-- Identity Mini Label -->
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-xs font-mono text-slate-400 tracking-wider">Hi, I'm Juan (duranpx)</span>
+          <span class="h-1 w-1 rounded-full bg-slate-600"></span>
+          <span class="text-xs font-mono text-slate-400">Universidad de Caldas</span>
+        </div>
+
+        <!-- Punchy Hero Headline matching Reference -->
+        <h1 class="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.08] font-display">
+          I'm a Systems &amp; <br class="hidden sm:block"/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-400">Software Engineer.</span>
+        </h1>
+
+        <!-- Subline statement -->
+        <p class="mt-6 text-base sm:text-lg text-slate-400 max-w-2xl leading-relaxed font-normal">
+          Architecting secure distributed backends, resilient microservices, and high-fidelity interfaces. Bridging rigorous defensive design with clean, scalable execution.
+        </p>
+
+        <!-- Action Pills Cluster -->
+        <div class="mt-8 flex flex-wrap items-center gap-3" data-purpose="hero-actions">
+          <!-- Copy Email Pill Button -->
+          <button class="flex items-center gap-2.5 px-4 py-2.5 rounded-full glass-card border border-white/10 text-xs font-mono text-slate-200 hover:text-white pill-hover group" onclick="copyEmailToClipboard('juandaduran3030@gmail.com')">
+            <i class="fa-regular fa-copy text-slate-400 group-hover:text-blue-400 transition-colors"></i>
+            <span>juandaduran3030@gmail.com</span>
+          </button>
+          
+          <!-- LinkedIn Link Pill -->
+          <a class="flex items-center gap-2 px-4 py-2.5 rounded-full glass-card border border-white/10 text-xs font-mono text-slate-300 hover:text-white pill-hover group" href="https://www.linkedin.com/in/duranpx" rel="noopener noreferrer" target="_blank">
+            <i class="fa-brands fa-linkedin-in text-slate-400 group-hover:text-blue-400"></i>
+            <span>LinkedIn</span>
+            <i class="fa-solid fa-arrow-up-right text-[10px] text-slate-500 group-hover:text-white transition"></i>
+          </a>
+          
+          <!-- GitHub Link Pill -->
+          <a class="flex items-center gap-2 px-4 py-2.5 rounded-full glass-card border border-white/10 text-xs font-mono text-slate-300 hover:text-white pill-hover group" href="https://github.com/DuranPX" rel="noopener noreferrer" target="_blank">
+            <i class="fa-brands fa-github text-slate-400 group-hover:text-blue-400"></i>
+            <span>GitHub</span>
+            <i class="fa-solid fa-arrow-up-right text-[10px] text-slate-500 group-hover:text-white transition"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Column: Tactile Wireframe Resume Card -->
+      <div class="lg:col-span-4 flex justify-center lg:justify-end">
+        <a class="group relative block w-full max-w-sm rounded-2xl glass-card p-5 border border-white/10 hover:border-blue-500/40 transition-all duration-300 shadow-2xl hover:shadow-glow-subtle" href="#contact">
+          <!-- Tactile HUD Blueprint Illustration -->
+          <div class="relative w-full aspect-[4/3] rounded-xl bg-gradient-to-b from-[#13161d] to-[#0c0e12] border border-white/5 p-4 flex flex-col justify-between overflow-hidden">
+            <!-- Header bar wireframe -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <div class="h-2 w-2 rounded-full bg-red-500/60"></div>
+                <div class="h-2 w-2 rounded-full bg-yellow-500/60"></div>
+                <div class="h-2 w-2 rounded-full bg-emerald-500/60"></div>
+              </div>
+              <span class="text-[9px] font-mono uppercase tracking-wider text-slate-500">DOSSIER v2.4</span>
+            </div>
+            
+            <!-- Stylized schematic nodes -->
+            <div class="space-y-2.5 my-auto py-2">
+              <div class="flex items-center gap-2">
+                <div class="h-6 w-6 rounded-md bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-[10px]">
+                  <i class="fa-solid fa-server"></i>
+                </div>
+                <div class="flex-1 space-y-1">
+                  <div class="h-1.5 bg-slate-700/80 rounded w-4/5"></div>
+                  <div class="h-1 bg-slate-800 rounded w-2/5"></div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="h-6 w-6 rounded-md bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-[10px]">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="flex-1 space-y-1">
+                  <div class="h-1.5 bg-slate-700/80 rounded w-3/4"></div>
+                  <div class="h-1 bg-slate-800 rounded w-3/5"></div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="h-6 w-6 rounded-md bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-[10px]">
+                  <i class="fa-solid fa-microchip"></i>
+                </div>
+                <div class="flex-1 space-y-1">
+                  <div class="h-1.5 bg-slate-700/80 rounded w-2/3"></div>
+                  <div class="h-1 bg-slate-800 rounded w-1/2"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tactile signature curve line -->
+            <div class="pt-2 border-t border-white/5 flex items-center justify-between text-slate-500 text-[10px] font-mono">
+              <span class="flex items-center gap-1">
+                <i class="fa-solid fa-lock text-[8px] text-blue-400"></i> RBAC &amp; Cloud Verified
+              </span>
+              <span>100% LATAM / EST</span>
+            </div>
+            
+            <!-- Soft background aura -->
+            <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-colors"></div>
+          </div>
+
+          <!-- Bottom Card Caption -->
+          <div class="mt-4 flex items-center justify-between pt-1">
+            <div>
+              <p class="text-sm font-semibold text-white tracking-tight group-hover:text-blue-400 transition-colors">Engineering Dossier &amp; CV</p>
+              <p class="text-xs text-slate-500 font-mono mt-0.5">Backend, Security &amp; Interactive Systems</p>
+            </div>
+            <div class="h-8 w-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 group-hover:bg-white group-hover:text-black transition-all">
+              <i class="fa-solid fa-arrow-down text-xs"></i>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Micro-stats bar below hero -->
+    <div class="mt-14 pt-6 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono text-slate-400" data-purpose="meta-stats-bar">
+      <div>
+        <span class="block text-slate-500 text-[11px]">Core Architecture</span>
+        <span class="text-slate-200 font-medium">Spring Boot &amp; Node.js</span>
+      </div>
+      <div>
+        <span class="block text-slate-500 text-[11px]">Security Standard</span>
+        <span class="text-slate-200 font-medium">Dual RBAC &amp; PoLP Design</span>
+      </div>
+      <div>
+        <span class="block text-slate-500 text-[11px]">Cloud Certification</span>
+        <span class="text-slate-200 font-medium">Google Cloud Foundation (GCP)</span>
+      </div>
+      <div>
+        <span class="block text-slate-500 text-[11px]">Base Location</span>
+        <span class="text-slate-200 font-medium">Colombia · Remote Worldwide</span>
+      </div>
+    </div>
+  </section>
+  <!-- END: HeroSection -->
+
+  <!-- BEGIN: SelectedWorkSection (Compact Cards with Image Switcher) -->
+  <section class="relative z-10 py-16 px-4 max-w-6xl mx-auto" data-purpose="portfolio-work" id="work">
+    <!-- Section Header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+      <div>
+        <span class="text-[11px] font-mono tracking-widest uppercase text-slate-500 block mb-1">A SELECTION</span>
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white font-display">Selected work</h2>
+      </div>
+      <p class="text-xs font-mono text-slate-400 mt-2 md:mt-0 flex items-center gap-1.5">
+        <i class="fa-regular fa-images text-blue-400"></i>
+        <span>Use arrows or dots to cycle project images</span>
+      </p>
+    </div>
+
+    <!-- Responsive 2-Column Grid of Compact Project Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- =========================================================================
+           CARD 1: SBuses (Transit Telemetry & Fleet Management)
+           CAMBIO DE IMÁGENES: Puedes reemplazar las imágenes en los divs .slide
+      ========================================================================== -->
+      <article class="glass-card rounded-2xl border border-white/10 p-5 flex flex-col justify-between hover:border-blue-500/40 transition-all duration-300 group" data-project="sbuses">
+        <div>
+          <!-- Image Switcher Carousel -->
+          <div class="project-carousel relative aspect-[16/10] bg-[#0c0e13] rounded-xl overflow-hidden border border-white/10 group/carousel mb-5" data-current-slide="0">
+            <!-- Carousel Slides -->
+            <div class="slides-wrapper relative w-full h-full overflow-hidden">
+              
+              <!-- Slide 1: Live Telemetry Canvas / Map -->
+              <div class="slide absolute inset-0 transition-opacity duration-300 opacity-100 z-10 bg-[#07090c] p-4 flex flex-col justify-between">
+                <!-- Mock Header Bar -->
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 text-[10px] font-mono text-slate-400">
+                  <div class="flex items-center gap-1.5">
+                    <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>SBuses Dispatch Engine</span>
+                  </div>
+                  <span class="bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded text-[9px] border border-blue-500/20">LIVE MAP</span>
+                </div>
+                <!-- Route Vector Graphic -->
+                <div class="relative flex-1 my-2 rounded bg-black/40 border border-white/5 overflow-hidden flex flex-col justify-between p-2.5">
+                  <svg class="absolute inset-0 w-full h-full opacity-50" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 20 90 Q 70 20 140 60 T 280 30" fill="none" stroke="#3b82f6" stroke-dasharray="3 3" stroke-width="2"></path>
+                    <path d="M 30 110 Q 110 70 190 100 T 320 50" fill="none" stroke="#10b981" stroke-width="2"></path>
+                    <circle cx="140" cy="60" fill="#3b82f6" r="4"></circle>
+                    <circle cx="190" cy="100" fill="#10b981" r="4"></circle>
+                  </svg>
+                  <div class="relative z-10 flex justify-between items-start text-[9px] font-mono">
+                    <span class="bg-black/80 px-2 py-1 rounded text-white font-bold border border-white/10">42 Units Active</span>
+                    <span class="bg-black/80 px-2 py-1 rounded text-emerald-400 font-bold border border-white/10">&lt; 140ms Latency</span>
+                  </div>
+                  <div class="relative z-10 bg-surface/90 border border-white/10 p-2 rounded flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <i class="fa-solid fa-bus text-blue-400 text-xs"></i>
+                      <span class="text-white text-[11px] font-semibold">Unit #108 · Route 4B</span>
+                    </div>
+                    <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">On Schedule</span>
+                  </div>
+                </div>
+                <!-- Security line -->
+                <div class="flex justify-between text-[9px] font-mono text-slate-400 pt-1 border-t border-white/5">
+                  <span>Leaflet GIS Indexing</span>
+                  <span class="text-blue-300">Dual RBAC (Admin / Driver)</span>
+                </div>
+              </div>
+
+              <!-- Slide 2: Security & Backend Architecture -->
+              <div class="slide absolute inset-0 transition-opacity duration-300 opacity-0 z-0 bg-gradient-to-br from-[#0c0e14] to-[#07080a] p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 text-[10px] font-mono text-slate-400">
+                  <span class="text-blue-400"><i class="fa-solid fa-shield-halved mr-1"></i> Spring Security &amp; JWT Gate</span>
+                  <span class="text-[9px] text-slate-500">SCHEMATIC v2</span>
+                </div>
+                <div class="my-auto space-y-2 font-mono text-[10px]">
+                  <div class="p-2 rounded bg-black/60 border border-blue-500/20 flex items-center justify-between">
+                    <span class="text-slate-300">Auth Token Verification</span>
+                    <span class="text-emerald-400">HMAC-SHA256</span>
+                  </div>
+                  <div class="p-2 rounded bg-black/60 border border-white/5 flex items-center justify-between">
+                    <span class="text-slate-300">Spatial Geofence Engine</span>
+                    <span class="text-blue-400">Sub-meter Precision</span>
+                  </div>
+                  <div class="p-2 rounded bg-black/60 border border-white/5 flex items-center justify-between">
+                    <span class="text-slate-300">Dispatch Notification Stream</span>
+                    <span class="text-amber-400">WebSockets Async</span>
+                  </div>
+                </div>
+                <div class="text-[9px] font-mono text-slate-500 text-center">Multi-tenant fleet data segregation enforced</div>
+              </div>
+
+              <!-- Slide 3: Code / API Sample or Custom Image Slot -->
+              <div class="slide absolute inset-0 transition-opacity duration-300 opacity-0 z-0 bg-[#08090d] p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 text-[10px] font-mono text-slate-400">
+                  <span class="text-slate-300"><i class="fa-solid fa-code mr-1 text-emerald-400"></i> REST Endpoint Telemetry</span>
+                  <span class="text-emerald-400 text-[9px]">200 OK</span>
+                </div>
+                <pre class="my-auto p-2.5 rounded bg-black/70 border border-white/5 font-mono text-[9px] text-slate-300 overflow-x-auto leading-relaxed">
+{
+  "unitId": "BUS-108",
+  "status": "IN_TRANSIT",
+  "coordinates": [5.0689, -75.5174],
+  "driverRbac": "ROLE_OPERATOR",
+  "syncState": "REALTIME"
+}</pre>
+                <div class="text-[9px] font-mono text-slate-400 flex items-center justify-between">
+                  <span>Spring Boot REST</span>
+                  <span class="text-emerald-400">PostgreSQL / MySQL</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Carousel Overlay Elements -->
+            <div class="absolute top-2.5 left-2.5 z-20">
+              <span class="bg-black/75 backdrop-blur-md text-blue-400 border border-blue-500/30 text-[9px] font-mono px-2 py-0.5 rounded-full font-semibold">
+                LIVE TELEMETRY
+              </span>
+            </div>
+
+            <div class="absolute top-2.5 right-2.5 z-20">
+              <span class="slide-counter bg-black/75 backdrop-blur-md text-slate-300 border border-white/10 text-[9px] font-mono px-2 py-0.5 rounded-full">
+                1 / 3
+              </span>
+            </div>
+
+            <!-- Left / Right Navigation Buttons -->
+            <button class="carousel-prev absolute left-2 top-1/2 -translate-y-1/2 z-20 h-7 w-7 rounded-full bg-black/80 border border-white/20 text-white flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-white hover:text-black shadow-lg" aria-label="Previous Slide">
+              <i class="fa-solid fa-chevron-left text-[10px]"></i>
+            </button>
+            <button class="carousel-next absolute right-2 top-1/2 -translate-y-1/2 z-20 h-7 w-7 rounded-full bg-black/80 border border-white/20 text-white flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-white hover:text-black shadow-lg" aria-label="Next Slide">
+              <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+
+            <!-- Bottom Dot Indicators -->
+            <div class="carousel-dots absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/70 backdrop-blur-sm border border-white/10">
+              <button class="dot w-3 h-1.5 rounded-full bg-white transition-all" data-index="0" aria-label="Go to slide 1"></button>
+              <button class="dot w-1.5 h-1.5 rounded-full bg-white/40 hover:bg-white/70 transition-all" data-index="1" aria-label="Go to slide 2"></button>
+              <button class="dot w-1.5 h-1.5 rounded-full bg-white/40 hover:bg-white/70 transition-all" data-index="2" aria-label="Go to slide 3"></button>
+            </div>
+          </div>
+
+          <!-- Card Content Body -->
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
+              <span>Transit Telemetry</span>
+              <span>•</span>
+              <span>Dual RBAC</span>
+              <span>•</span>
+              <span>Leaflet GIS</span>
+            </div>
+            
+            <h3 class="text-xl font-bold text-white tracking-tight font-display group-hover:text-blue-400 transition-colors">
+              SBuses — Fleet Telemetry System
+            </h3>
+            
+            <p class="text-xs font-semibold text-slate-200">
+              Dual-layer role authorization &amp; real-time coordinate rendering for transit fleets.
+            </p>
+            
+            <p class="text-xs text-slate-400 leading-relaxed line-clamp-3">
+              Engineered with hardened Spring Boot endpoints, custom spatial indexing with Leaflet GIS, and instant incident dispatching across distributed transit corridors.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tech Badges & Card Link -->
+        <div class="pt-4 mt-4 border-t border-white/5 space-y-3">
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">Java / Spring Boot</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">React</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">Leaflet GIS</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">JWT RBAC</span>
+          </div>
+          
+          <div class="flex items-center justify-between text-xs pt-1">
+            <a class="inline-flex items-center gap-1.5 font-semibold text-white group-hover:text-blue-400 transition-colors" href="#contact">
+              <span>Inspect architecture</span>
+              <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+            </a>
+            <span class="text-[10px] font-mono text-slate-500">MVP / Production-Ready</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- =========================================================================
+           CARD 2: LLM Cost Monitor (Real-time AI Token & Budget Telemetry)
+      ========================================================================== -->
+      <article class="glass-card rounded-2xl border border-white/10 p-5 flex flex-col justify-between hover:border-purple-500/40 transition-all duration-300 group" data-project="llm-monitor">
+        <div>
+          <!-- Image Switcher Carousel -->
+          <div class="project-carousel relative aspect-[16/10] bg-[#0c0e13] rounded-xl overflow-hidden border border-white/10 group/carousel mb-5" data-current-slide="0">
+            <div class="slides-wrapper relative w-full h-full overflow-hidden">
+              
+              <!-- Slide 1: AI Observability Dashboard -->
+              <div class="slide absolute inset-0 transition-opacity duration-300 opacity-100 z-10 bg-[#07090c] p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 text-[10px] font-mono text-slate-400">
+                  <span class="text-white font-medium flex items-center gap-1.5">
+                    <i class="fa-solid fa-chart-line text-purple-400"></i> AI Telemetry Engine
+                  </span>
+                  <span class="text-purple-400 font-mono text-[9px]">Aggregator v1.8</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-2 my-2">
+                  <div class="p-2 bg-black/60 rounded border border-white/5">
+                    <span class="text-[9px] font-mono text-slate-400 block">Tokens Analyzed</span>
+                    <span class="text-base font-bold text-white font-mono">1.84M / day</span>
+                    <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                      <div class="bg-purple-500 h-full w-[72%]"></div>
+                    </div>
+                  </div>
+                  <div class="p-2 bg-black/60 rounded border border-white/5">
+                    <span class="text-[9px] font-mono text-slate-400 block">Est. Cost Savings</span>
+                    <span class="text-base font-bold text-emerald-400 font-mono">-38.4%</span>
+                    <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                      <div class="bg-emerald-500 h-full w-[85%]"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Stylized Latency Stream -->
+                <div class="p-2 bg-black/60 rounded border border-white/5">
+                  <div class="flex justify-between text-[9px] font-mono text-slate-400 mb-1">
+                    <span>Inference Latency Stream</span>
+                    <span class="text-slate-300">P99: 412ms</span>
+                  </div>
+                  <div class="h-8 flex items-end gap-1">
+                    <div class="w-1/12 bg-purple-500/40 h-3 rounded-t"></div>
+                    <div class="w-1/12 bg-purple-500/60 h-5 rounded-t"></div>
+                    <div class="w-1/12 bg-purple-500/80 h-7 rounded-t"></div>
+                    <div class="w-1/12 bg-purple-500 h-6 rounded-t"></div>
+                    <div class="w-1/12 bg-purple-400 h-8 rounded-t"></div>
+                    <div class="w-1/12 bg-purple-500/70 h-4 rounded-t"></div>
+                    <div class="w-1/12 bg-purple-500/50 h-5 rounded-t"></div>
+                    <div class="w-1/12 bg-purple-500/90 h-8 rounded-t"></div>
+                    <div class="w-1/12 bg-purple-500/60 h-6 rounded-t"></div>
+                    <div class="w-1/12 bg-purple-500/40 h-4 rounded-t"></div>
+                    <div class="w-1/12 bg-purple-500/80 h-7 rounded-t"></div>
+                    <div class="w-1/12 bg-purple-400 h-8 rounded-t"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Slide 2: Multi-tenant Architecture -->
+              <div class="slide absolute inset-0 transition-opacity duration-300 opacity-0 z-0 bg-gradient-to-br from-[#0c0d14] to-[#07080a] p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 text-[10px] font-mono text-slate-400">
+                  <span class="text-purple-400"><i class="fa-solid fa-arrows-split-up-and-left mr-1"></i> Multi-tenant Gateway</span>
+                  <span class="text-[9px] text-slate-500">PIPELINE</span>
+                </div>
+                <div class="space-y-2 my-auto font-mono text-[10px]">
+                  <div class="p-2 rounded bg-black/60 border border-purple-500/20 flex items-center justify-between">
+                    <span>Async Token Parsing</span>
+                    <span class="text-purple-400">Python Worker</span>
+                  </div>
+                  <div class="p-2 rounded bg-black/60 border border-white/5 flex items-center justify-between">
+                    <span>Threshold Budget Alerter</span>
+                    <span class="text-emerald-400">Active Warning</span>
+                  </div>
+                  <div class="p-2 rounded bg-black/60 border border-white/5 flex items-center justify-between">
+                    <span>Tenant Partitioning</span>
+                    <span class="text-slate-300">RLS Enforced</span>
+                  </div>
+                </div>
+                <div class="text-[9px] font-mono text-slate-500 text-center">Protects against unexpected billing tier spikes</div>
+              </div>
+
+              <!-- Slide 3: Telemetry Schema -->
+              <div class="slide absolute inset-0 transition-opacity duration-300 opacity-0 z-0 bg-[#08090d] p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 text-[10px] font-mono text-slate-400">
+                  <span class="text-purple-300"><i class="fa-solid fa-database mr-1"></i> Telemetry Record DTO</span>
+                  <span class="text-emerald-400 text-[9px]">LIVE SYNC</span>
+                </div>
+                <pre class="my-auto p-2.5 rounded bg-black/70 border border-white/5 font-mono text-[9px] text-slate-300 overflow-x-auto leading-relaxed">
+{
+  "tenantId": "org_987a1",
+  "model": "gpt-4o / claude-3-5-sonnet",
+  "promptTokens": 1420,
+  "completionTokens": 384,
+  "estimatedMicroCostUsd": 0.0084,
+  "latencyMs": 312
+}</pre>
+                <div class="text-[9px] font-mono text-slate-400 flex items-center justify-between">
+                  <span>Supabase / Postgres</span>
+                  <span class="text-purple-400">Recharts D3</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Carousel Overlay Elements -->
+            <div class="absolute top-2.5 left-2.5 z-20">
+              <span class="bg-black/75 backdrop-blur-md text-purple-400 border border-purple-500/30 text-[9px] font-mono px-2 py-0.5 rounded-full font-semibold">
+                AI OBSERVABILITY
+              </span>
+            </div>
+
+            <div class="absolute top-2.5 right-2.5 z-20">
+              <span class="slide-counter bg-black/75 backdrop-blur-md text-slate-300 border border-white/10 text-[9px] font-mono px-2 py-0.5 rounded-full">
+                1 / 3
+              </span>
+            </div>
+
+            <button class="carousel-prev absolute left-2 top-1/2 -translate-y-1/2 z-20 h-7 w-7 rounded-full bg-black/80 border border-white/20 text-white flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-white hover:text-black shadow-lg" aria-label="Previous Slide">
+              <i class="fa-solid fa-chevron-left text-[10px]"></i>
+            </button>
+            <button class="carousel-next absolute right-2 top-1/2 -translate-y-1/2 z-20 h-7 w-7 rounded-full bg-black/80 border border-white/20 text-white flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-white hover:text-black shadow-lg" aria-label="Next Slide">
+              <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+
+            <div class="carousel-dots absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/70 backdrop-blur-sm border border-white/10">
+              <button class="dot w-3 h-1.5 rounded-full bg-white transition-all" data-index="0" aria-label="Go to slide 1"></button>
+              <button class="dot w-1.5 h-1.5 rounded-full bg-white/40 hover:bg-white/70 transition-all" data-index="1" aria-label="Go to slide 2"></button>
+              <button class="dot w-1.5 h-1.5 rounded-full bg-white/40 hover:bg-white/70 transition-all" data-index="2" aria-label="Go to slide 3"></button>
+            </div>
+          </div>
+
+          <!-- Card Content Body -->
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
+              <span>AI Observability</span>
+              <span>•</span>
+              <span>Python Async</span>
+              <span>•</span>
+              <span>Cost Analytics</span>
+            </div>
+            
+            <h3 class="text-xl font-bold text-white tracking-tight font-display group-hover:text-purple-400 transition-colors">
+              LLM Cost Monitor — Token &amp; Budget Telemetry
+            </h3>
+            
+            <p class="text-xs font-semibold text-slate-200">
+              Asynchronous pipeline calculating real-time inference expenditure and token drift.
+            </p>
+            
+            <p class="text-xs text-slate-400 leading-relaxed line-clamp-3">
+              High-throughput monitoring utility that sits adjacent to inference gateways. Tracks input/output tokens, per-query micro-costs, and warns developers before hitting tier limits.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tech Badges & Card Link -->
+        <div class="pt-4 mt-4 border-t border-white/5 space-y-3">
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">Python / Flask</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">TypeScript</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">Recharts / D3</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">Docker</span>
+          </div>
+          
+          <div class="flex items-center justify-between text-xs pt-1">
+            <a class="inline-flex items-center gap-1.5 font-semibold text-white group-hover:text-purple-400 transition-colors" href="#contact">
+              <span>View architecture</span>
+              <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+            </a>
+            <span class="text-[10px] font-mono text-slate-500">Multi-tenant MVP</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- =========================================================================
+           CARD 3: DND_Records (Campaign Ledger & Graph System)
+      ========================================================================== -->
+      <article class="glass-card rounded-2xl border border-white/10 p-5 flex flex-col justify-between hover:border-emerald-500/40 transition-all duration-300 group" data-project="dndrecords">
+        <div>
+          <!-- Image Switcher Carousel -->
+          <div class="project-carousel relative aspect-[16/10] bg-[#0c0e13] rounded-xl overflow-hidden border border-white/10 group/carousel mb-5" data-current-slide="0">
+            <div class="slides-wrapper relative w-full h-full overflow-hidden">
+              
+              <!-- Slide 1: Interactive Knowledge Graph -->
+              <div class="slide absolute inset-0 transition-opacity duration-300 opacity-100 z-10 bg-[#07090c] p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 text-[10px] font-mono text-slate-400">
+                  <span class="text-white font-medium flex items-center gap-1.5">
+                    <i class="fa-solid fa-diagram-project text-emerald-400"></i> Bidirectional Ledger Graph
+                  </span>
+                  <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded text-[9px]">RLS ENFORCED</span>
+                </div>
+                
+                <div class="relative flex-1 my-2 rounded bg-black/40 border border-white/5 overflow-hidden flex items-center justify-center">
+                  <!-- Node Graphic -->
+                  <div class="relative w-full h-full flex items-center justify-center">
+                    <div class="z-20 h-9 w-9 rounded-full bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-white font-mono text-[10px] font-bold shadow-lg shadow-emerald-500/20">
+                      ROOT
+                    </div>
+                    <div class="absolute top-2 left-4 px-2 py-0.5 rounded bg-surface border border-white/10 text-[9px] font-mono text-slate-300">
+                      [[Faction_Arcane]]
+                    </div>
+                    <div class="absolute bottom-2 left-6 px-2 py-0.5 rounded bg-surface border border-white/10 text-[9px] font-mono text-slate-300">
+                      [[Artifacts_Relic]]
+                    </div>
+                    <div class="absolute top-3 right-4 px-2 py-0.5 rounded bg-surface border border-white/10 text-[9px] font-mono text-slate-300">
+                      [[Player_Ledger]]
+                    </div>
+                    <div class="absolute bottom-3 right-5 px-2 py-0.5 rounded bg-surface border border-white/10 text-[9px] font-mono text-slate-300">
+                      [[Session_Logs]]
+                    </div>
+                    <!-- Connector lines -->
+                    <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-30">
+                      <line stroke="#10b981" stroke-width="1.5" x1="50%" x2="25%" y1="50%" y2="20%"></line>
+                      <line stroke="#10b981" stroke-width="1.5" x1="50%" x2="30%" y1="50%" y2="80%"></line>
+                      <line stroke="#10b981" stroke-width="1.5" x1="50%" x2="80%" y1="50%" y2="25%"></line>
+                      <line stroke="#10b981" stroke-width="1.5" x1="50%" x2="75%" y1="50%" y2="75%"></line>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="flex justify-between text-[9px] font-mono text-slate-400 pt-1 border-t border-white/5">
+                  <span>Next.js 14 + Konva Canvas</span>
+                  <span class="text-white">PostgreSQL RLS Policies</span>
+                </div>
+              </div>
+
+              <!-- Slide 2: Markdown & Entity Backlinking -->
+              <div class="slide absolute inset-0 transition-opacity duration-300 opacity-0 z-0 bg-gradient-to-br from-[#0a0f12] to-[#07080a] p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 text-[10px] font-mono text-slate-400">
+                  <span class="text-emerald-400"><i class="fa-solid fa-file-lines mr-1"></i> Obsidian-Style Parsing</span>
+                  <span class="text-[9px] text-slate-500">AST PARSER</span>
+                </div>
+                <div class="space-y-2 my-auto font-mono text-[10px]">
+                  <div class="p-2 rounded bg-black/60 border border-emerald-500/20 flex items-center justify-between">
+                    <span>Bidirectional Entity Ref</span>
+                    <span class="text-emerald-400">Automated Indexing</span>
+                  </div>
+                  <div class="p-2 rounded bg-black/60 border border-white/5 flex items-center justify-between">
+                    <span>Campaign State Sync</span>
+                    <span class="text-blue-400">Realtime Channel</span>
+                  </div>
+                  <div class="p-2 rounded bg-black/60 border border-white/5 flex items-center justify-between">
+                    <span>Privacy Boundaries</span>
+                    <span class="text-slate-300">GM vs Player Views</span>
+                  </div>
+                </div>
+                <div class="text-[9px] font-mono text-slate-500 text-center">Zero leakage across multi-party tabletop sessions</div>
+              </div>
+
+              <!-- Slide 3: Schema Design -->
+              <div class="slide absolute inset-0 transition-opacity duration-300 opacity-0 z-0 bg-[#08090d] p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 text-[10px] font-mono text-slate-400">
+                  <span class="text-slate-300"><i class="fa-solid fa-lock mr-1 text-emerald-400"></i> Supabase RLS Policy</span>
+                  <span class="text-emerald-400 text-[9px]">ENFORCED</span>
+                </div>
+                <pre class="my-auto p-2.5 rounded bg-black/70 border border-white/5 font-mono text-[9px] text-slate-300 overflow-x-auto leading-relaxed">
+CREATE POLICY "entity_campaign_isolation"
+ON campaign_entities FOR SELECT
+USING (
+  campaign_id IN (
+    SELECT id FROM campaigns 
+    WHERE auth.uid() = user_id OR is_public = true
+  )
+);</pre>
+                <div class="text-[9px] font-mono text-slate-400 flex items-center justify-between">
+                  <span>Postgres RLS</span>
+                  <span class="text-emerald-400">Strict Data Boundary</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Carousel Overlay Elements -->
+            <div class="absolute top-2.5 left-2.5 z-20">
+              <span class="bg-black/75 backdrop-blur-md text-emerald-400 border border-emerald-500/30 text-[9px] font-mono px-2 py-0.5 rounded-full font-semibold">
+                KNOWLEDGE GRAPH
+              </span>
+            </div>
+
+            <div class="absolute top-2.5 right-2.5 z-20">
+              <span class="slide-counter bg-black/75 backdrop-blur-md text-slate-300 border border-white/10 text-[9px] font-mono px-2 py-0.5 rounded-full">
+                1 / 3
+              </span>
+            </div>
+
+            <button class="carousel-prev absolute left-2 top-1/2 -translate-y-1/2 z-20 h-7 w-7 rounded-full bg-black/80 border border-white/20 text-white flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-white hover:text-black shadow-lg" aria-label="Previous Slide">
+              <i class="fa-solid fa-chevron-left text-[10px]"></i>
+            </button>
+            <button class="carousel-next absolute right-2 top-1/2 -translate-y-1/2 z-20 h-7 w-7 rounded-full bg-black/80 border border-white/20 text-white flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-white hover:text-black shadow-lg" aria-label="Next Slide">
+              <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+
+            <div class="carousel-dots absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/70 backdrop-blur-sm border border-white/10">
+              <button class="dot w-3 h-1.5 rounded-full bg-white transition-all" data-index="0" aria-label="Go to slide 1"></button>
+              <button class="dot w-1.5 h-1.5 rounded-full bg-white/40 hover:bg-white/70 transition-all" data-index="1" aria-label="Go to slide 2"></button>
+              <button class="dot w-1.5 h-1.5 rounded-full bg-white/40 hover:bg-white/70 transition-all" data-index="2" aria-label="Go to slide 3"></button>
+            </div>
+          </div>
+
+          <!-- Card Content Body -->
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
+              <span>Knowledge Systems</span>
+              <span>•</span>
+              <span>Next.js</span>
+              <span>•</span>
+              <span>Supabase RLS</span>
+            </div>
+            
+            <h3 class="text-xl font-bold text-white tracking-tight font-display group-hover:text-emerald-400 transition-colors">
+              DND_Records — Campaign Ledger &amp; Graph System
+            </h3>
+            
+            <p class="text-xs font-semibold text-slate-200">
+              Bidirectional entity indexing inspired by Obsidian with granular row-level data segregation.
+            </p>
+            
+            <p class="text-xs text-slate-400 leading-relaxed line-clamp-3">
+              Designed for complex episodic world-building requiring instantaneous cross-referencing. Integrates Markdown parsing, automated entity backlinking, and rigorous Supabase RLS policies.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tech Badges & Card Link -->
+        <div class="pt-4 mt-4 border-t border-white/5 space-y-3">
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">Next.js 14</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">TypeScript</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">Supabase</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">Tailwind CSS</span>
+          </div>
+          
+          <div class="flex items-center justify-between text-xs pt-1">
+            <a class="inline-flex items-center gap-1.5 font-semibold text-white group-hover:text-emerald-400 transition-colors" href="#contact">
+              <span>Review schema</span>
+              <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+            </a>
+            <span class="text-[10px] font-mono text-slate-500">Interactive Canvas</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- =========================================================================
+           CARD 4: AULA UP (Interactive Classroom Ecosystem)
+      ========================================================================== -->
+      <article class="glass-card rounded-2xl border border-white/10 p-5 flex flex-col justify-between hover:border-amber-500/40 transition-all duration-300 group" data-project="aulaup">
+        <div>
+          <!-- Image Switcher Carousel -->
+          <div class="project-carousel relative aspect-[16/10] bg-[#0c0e13] rounded-xl overflow-hidden border border-white/10 group/carousel mb-5" data-current-slide="0">
+            <div class="slides-wrapper relative w-full h-full overflow-hidden">
+              
+              <!-- Slide 1: Inclusive Modular UI -->
+              <div class="slide absolute inset-0 transition-opacity duration-300 opacity-100 z-10 bg-[#07090c] p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 text-[10px] font-mono text-slate-400">
+                  <span class="text-white font-medium flex items-center gap-1.5">
+                    <i class="fa-solid fa-graduation-cap text-amber-400"></i> Fundación ASISCO UP!
+                  </span>
+                  <span class="text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded text-[9px]">INCLUSIVE UI</span>
+                </div>
+                
+                <div class="space-y-2 my-auto">
+                  <div class="p-2 bg-black/60 rounded border border-white/5 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <div class="h-6 w-6 rounded bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-[10px]">
+                        01
+                      </div>
+                      <div>
+                        <div class="text-white text-[11px] font-semibold">Accessible Module Engine</div>
+                        <div class="text-slate-400 text-[9px] font-mono">WCAG 2.1 AA Compliant</div>
+                      </div>
+                    </div>
+                    <span class="text-emerald-400 text-[9px] font-mono">100% Passed</span>
+                  </div>
+                  
+                  <div class="p-2 bg-black/60 rounded border border-white/5 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <div class="h-6 w-6 rounded bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-[10px]">
+                        02
+                      </div>
+                      <div>
+                        <div class="text-white text-[11px] font-semibold">Micro-Assessment Feedback</div>
+                        <div class="text-slate-400 text-[9px] font-mono">Gamified milestone checks</div>
+                      </div>
+                    </div>
+                    <span class="text-blue-400 text-[9px] font-mono">Synced</span>
+                  </div>
+                </div>
+
+                <div class="flex justify-between text-[9px] font-mono text-slate-400 pt-1 border-t border-white/5">
+                  <span>Target: Low-Bandwidth Devices</span>
+                  <span class="text-white">Youth &amp; STEM Outreach</span>
+                </div>
+              </div>
+
+              <!-- Slide 2: Accessible Architecture -->
+              <div class="slide absolute inset-0 transition-opacity duration-300 opacity-0 z-0 bg-gradient-to-br from-[#120f09] to-[#07080a] p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 text-[10px] font-mono text-slate-400">
+                  <span class="text-amber-400"><i class="fa-solid fa-universal-access mr-1"></i> Accessibility Standard</span>
+                  <span class="text-[9px] text-slate-500">WCAG 2.1</span>
+                </div>
+                <div class="space-y-2 my-auto font-mono text-[10px]">
+                  <div class="p-2 rounded bg-black/60 border border-amber-500/20 flex items-center justify-between">
+                    <span>High-Contrast Dynamic Mode</span>
+                    <span class="text-amber-400">Zero Blur</span>
+                  </div>
+                  <div class="p-2 rounded bg-black/60 border border-white/5 flex items-center justify-between">
+                    <span>Keyboard Navigation Path</span>
+                    <span class="text-emerald-400">Full Focus Ring</span>
+                  </div>
+                  <div class="p-2 rounded bg-black/60 border border-white/5 flex items-center justify-between">
+                    <span>Reduced Data Footprint</span>
+                    <span class="text-blue-400">&lt; 150KB Payload</span>
+                  </div>
+                </div>
+                <div class="text-[9px] font-mono text-slate-500 text-center">Optimized for regional communities with limited internet</div>
+              </div>
+
+              <!-- Slide 3: Progress State Model -->
+              <div class="slide absolute inset-0 transition-opacity duration-300 opacity-0 z-0 bg-[#08090d] p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between pb-2 border-b border-white/5 text-[10px] font-mono text-slate-400">
+                  <span class="text-amber-300"><i class="fa-solid fa-cubes mr-1"></i> Interactive Lesson State</span>
+                  <span class="text-emerald-400 text-[9px]">PROGRESS</span>
+                </div>
+                <pre class="my-auto p-2.5 rounded bg-black/70 border border-white/5 font-mono text-[9px] text-slate-300 overflow-x-auto leading-relaxed">
+{
+  "participantId": "ASISCO-41",
+  "assignedWorkshop": "Digital_Foundations",
+  "activityType": "ASSOCIATION_AND_ORDER",
+  "sonUpScore": 85,
+  "completedModules": [1, 2, 3]
+}</pre>
+                <div class="text-[9px] font-mono text-slate-400 flex items-center justify-between">
+                  <span>MongoDB Atlas</span>
+                  <span class="text-amber-400">Node.js Express</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Carousel Overlay Elements -->
+            <div class="absolute top-2.5 left-2.5 z-20">
+              <span class="bg-black/75 backdrop-blur-md text-amber-400 border border-amber-500/30 text-[9px] font-mono px-2 py-0.5 rounded-full font-semibold">
+                SOCIAL INNOVATION
+              </span>
+            </div>
+
+            <div class="absolute top-2.5 right-2.5 z-20">
+              <span class="slide-counter bg-black/75 backdrop-blur-md text-slate-300 border border-white/10 text-[9px] font-mono px-2 py-0.5 rounded-full">
+                1 / 3
+              </span>
+            </div>
+
+            <button class="carousel-prev absolute left-2 top-1/2 -translate-y-1/2 z-20 h-7 w-7 rounded-full bg-black/80 border border-white/20 text-white flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-white hover:text-black shadow-lg" aria-label="Previous Slide">
+              <i class="fa-solid fa-chevron-left text-[10px]"></i>
+            </button>
+            <button class="carousel-next absolute right-2 top-1/2 -translate-y-1/2 z-20 h-7 w-7 rounded-full bg-black/80 border border-white/20 text-white flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-white hover:text-black shadow-lg" aria-label="Next Slide">
+              <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+
+            <div class="carousel-dots absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/70 backdrop-blur-sm border border-white/10">
+              <button class="dot w-3 h-1.5 rounded-full bg-white transition-all" data-index="0" aria-label="Go to slide 1"></button>
+              <button class="dot w-1.5 h-1.5 rounded-full bg-white/40 hover:bg-white/70 transition-all" data-index="1" aria-label="Go to slide 2"></button>
+              <button class="dot w-1.5 h-1.5 rounded-full bg-white/40 hover:bg-white/70 transition-all" data-index="2" aria-label="Go to slide 3"></button>
+            </div>
+          </div>
+
+          <!-- Card Content Body -->
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
+              <span>Social Innovation</span>
+              <span>•</span>
+              <span>Full-Stack</span>
+              <span>•</span>
+              <span>Accessibility</span>
+            </div>
+            
+            <h3 class="text-xl font-bold text-white tracking-tight font-display group-hover:text-amber-400 transition-colors">
+              AULA UP — Interactive Classroom Ecosystem
+            </h3>
+            
+            <p class="text-xs font-semibold text-slate-200">
+              Educational platform empowering underprivileged communities through digital literacy.
+            </p>
+            
+            <p class="text-xs text-slate-400 leading-relaxed line-clamp-3">
+              Architected lightweight, low-bandwidth optimized lessons with reactive progress tracking, zero-barrier onboarding, and intuitive administrative oversight.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tech Badges & Card Link -->
+        <div class="pt-4 mt-4 border-t border-white/5 space-y-3">
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">React</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">Node.js</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">MongoDB</span>
+            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300">Tailwind CSS</span>
+          </div>
+          
+          <div class="flex items-center justify-between text-xs pt-1">
+            <a class="inline-flex items-center gap-1.5 font-semibold text-white group-hover:text-amber-400 transition-colors" href="#contact">
+              <span>Read impact overview</span>
+              <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+            </a>
+            <span class="text-[10px] font-mono text-slate-500">Nonprofit Initiative</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+  <!-- END: SelectedWorkSection -->
+
+  <!-- BEGIN: WorkExperienceSection (Added from Reference Image 2) -->
+  <section class="relative z-10 py-16 px-4 max-w-6xl mx-auto" data-purpose="experience-timeline" id="experience">
+    <!-- Header -->
+    <div class="mb-12">
+      <span class="text-[11px] font-mono tracking-widest uppercase text-slate-500 block mb-1">CAREER TIMELINE</span>
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white font-display">Work experience</h2>
+      <p class="mt-2 text-sm text-slate-400 max-w-2xl">
+        Quantifiable track record in software architecture, microservices, and high-availability deployments.
+      </p>
+    </div>
+
+    <!-- Timeline Container with Left Line and Nodes -->
+    <div class="relative timeline-container pl-8 md:pl-10 space-y-8">
+
+      <!-- EXPERIENCE CARD 1: Wolf Enterprise -->
+      <div class="relative group">
+        <!-- Glowing Timeline Node Marker -->
+        <div class="absolute -left-8 md:-left-10 top-6 -translate-x-1/2 w-4 h-4 rounded-full bg-[#07080a] border-2 border-emerald-400 flex items-center justify-center z-10 shadow-lg shadow-emerald-500/30">
+          <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></div>
+        </div>
+
+        <article class="glass-card rounded-2xl border border-white/10 p-6 sm:p-8 hover:border-emerald-500/30 transition-all duration-300">
+          <!-- Top Tags & Date Badge -->
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-300">
+                <span>Founder • Tech Leadership</span>
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                <span>Present</span>
+              </span>
+            </div>
+            <span class="text-xs font-mono bg-white/5 border border-white/10 text-slate-300 px-3 py-1 rounded-full">
+              01/2026 — Present
+            </span>
+          </div>
+
+          <!-- Role & Company -->
+          <div class="mt-4">
+            <h3 class="text-2xl font-bold text-white tracking-tight font-display">
+              Founder &amp; Tech Lead
+            </h3>
+            <p class="text-xs font-mono text-slate-400 mt-1">
+              Wolf Enterprise · Manizales, Caldas
+            </p>
+            <p class="mt-3 text-sm text-slate-300 leading-relaxed">
+              Technical leadership, scalable backend architecture design, and end-to-end modular software engineering.
+            </p>
+          </div>
+
+          <!-- Divider -->
+          <div class="my-5 border-t border-white/5"></div>
+
+          <!-- Technical Impact & Quantifiable Results -->
+          <div>
+            <div class="flex items-center gap-2 text-xs font-mono font-semibold text-amber-400 tracking-wider mb-3 uppercase">
+              <i class="fa-solid fa-bolt text-amber-400 text-xs"></i>
+              <span>Technical Impact &amp; Quantifiable Results:</span>
+            </div>
+
+            <ul class="space-y-2.5 text-xs sm:text-sm text-slate-400 leading-relaxed">
+              <li class="flex items-start gap-2.5">
+                <span class="text-emerald-400 mt-1 text-[11px]"><i class="fa-solid fa-circle-check"></i></span>
+                <span>Architected and deployed microservices infrastructure and RESTful APIs using Node.js, Express, and Docker, achieving 99.8% uptime and sub-100ms response times.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <span class="text-emerald-400 mt-1 text-[11px]"><i class="fa-solid fa-circle-check"></i></span>
+                <span>Engineered relational database schemas in PostgreSQL with optimized query indexing and ACID concurrency controls.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <span class="text-emerald-400 mt-1 text-[11px]"><i class="fa-solid fa-circle-check"></i></span>
+                <span>Spearheaded technical roadmap and engineering governance, translating business requirements into modular, resilient software.</span>
+              </li>
+            </ul>
+          </div>
+        </article>
+      </div>
+
+      <!-- EXPERIENCE CARD 2: Fundación FreeAgents -->
+      <div class="relative group">
+        <!-- Glowing Timeline Node Marker -->
+        <div class="absolute -left-8 md:-left-10 top-6 -translate-x-1/2 w-4 h-4 rounded-full bg-[#07080a] border-2 border-blue-400 flex items-center justify-center z-10 shadow-lg shadow-blue-500/30">
+          <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+        </div>
+
+        <article class="glass-card rounded-2xl border border-white/10 p-6 sm:p-8 hover:border-blue-500/30 transition-all duration-300">
+          <!-- Top Tags & Date Badge -->
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-mono text-blue-300">
+              Web &amp; API Engineering
+            </span>
+            <span class="text-xs font-mono bg-white/5 border border-white/10 text-slate-300 px-3 py-1 rounded-full">
+              01/2024 — 01/2026
+            </span>
+          </div>
+
+          <!-- Role & Company -->
+          <div class="mt-4">
+            <h3 class="text-2xl font-bold text-white tracking-tight font-display">
+              Software Engineer &amp; System Integrator
+            </h3>
+            <p class="text-xs font-mono text-slate-400 mt-1">
+              Fundación FreeAgents · Remote / Colombia
+            </p>
+            <p class="mt-3 text-sm text-slate-300 leading-relaxed">
+              Software engineering, Node.js microservices development, and high-performance e-commerce platforms.
+            </p>
+          </div>
+
+          <!-- Divider -->
+          <div class="my-5 border-t border-white/5"></div>
+
+          <!-- Technical Impact & Quantifiable Results -->
+          <div>
+            <div class="flex items-center gap-2 text-xs font-mono font-semibold text-amber-400 tracking-wider mb-3 uppercase">
+              <i class="fa-solid fa-bolt text-amber-400 text-xs"></i>
+              <span>Technical Impact &amp; Quantifiable Results:</span>
+            </div>
+
+            <ul class="space-y-2.5 text-xs sm:text-sm text-slate-400 leading-relaxed">
+              <li class="flex items-start gap-2.5">
+                <span class="text-blue-400 mt-1 text-[11px]"><i class="fa-solid fa-circle-check"></i></span>
+                <span>Architected and deployed 4 microservices in Node.js and Docker for an e-commerce platform, slashing API response latency by 30% and supporting high-concurrency traffic.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <span class="text-blue-400 mt-1 text-[11px]"><i class="fa-solid fa-circle-check"></i></span>
+                <span>Built and integrated pure RESTful APIs for real-time inventory synchronization, payment gateways, and client portals with React and TypeScript.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <span class="text-blue-400 mt-1 text-[11px]"><i class="fa-solid fa-circle-check"></i></span>
+                <span>Implemented integration testing and relational database normalization to guarantee strict transactional integrity.</span>
+              </li>
+            </ul>
+          </div>
+        </article>
+      </div>
+
+    </div>
+  </section>
+  <!-- END: WorkExperienceSection -->
+
+  <!-- BEGIN: TechnicalArsenalSection -->
+  <section class="relative z-10 py-16 px-4 max-w-6xl mx-auto" data-purpose="tech-stack" id="stack">
+    <!-- Header -->
+    <div class="mb-12">
+      <span class="text-[11px] font-mono tracking-widest uppercase text-slate-500 block mb-1">TECHNICAL CAPABILITIES</span>
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white font-display">Engineering stack &amp; methods</h2>
+    </div>
+
+    <!-- 4 Pillars Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- Card 1: Backend Systems -->
+      <div class="glass-card p-6 rounded-2xl border border-white/10 flex flex-col justify-between hover:border-blue-500/40 transition">
+        <div>
+          <div class="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-4">
+            <i class="fa-solid fa-server text-sm"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2 font-display">Backend &amp; APIs</h3>
+          <p class="text-xs text-slate-400 leading-relaxed mb-4">
+            Resilient microservices, RESTful interfaces, and high-concurrency event handlers.
+          </p>
+        </div>
+        <div class="space-y-1.5 pt-3 border-t border-white/5 font-mono text-xs text-slate-300">
+          <div class="flex items-center justify-between"><span>Node.js / Express</span><span class="text-slate-500">Core</span></div>
+          <div class="flex items-center justify-between"><span>NestJS</span><span class="text-slate-500">Architecture</span></div>
+          <div class="flex items-center justify-between"><span>Java &amp; Spring Boot</span><span class="text-slate-500">Enterprise</span></div>
+          <div class="flex items-center justify-between"><span>Python &amp; Flask</span><span class="text-slate-500">Micro-APIs</span></div>
+        </div>
+      </div>
+
+      <!-- Card 2: Cloud & Infrastructure -->
+      <div class="glass-card p-6 rounded-2xl border border-white/10 flex flex-col justify-between hover:border-emerald-500/40 transition">
+        <div>
+          <div class="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4">
+            <i class="fa-solid fa-cloud text-sm"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2 font-display">Cloud &amp; Storage</h3>
+          <p class="text-xs text-slate-400 leading-relaxed mb-4">
+            Containerized pipelines, managed databases, and cloud compute orchestration.
+          </p>
+        </div>
+        <div class="space-y-1.5 pt-3 border-t border-white/5 font-mono text-xs text-slate-300">
+          <div class="flex items-center justify-between"><span>Google Cloud (GCP)</span><span class="text-slate-500">Certified</span></div>
+          <div class="flex items-center justify-between"><span>Docker Containers</span><span class="text-slate-500">Deploy</span></div>
+          <div class="flex items-center justify-between"><span>PostgreSQL / MySQL</span><span class="text-slate-500">Relational</span></div>
+          <div class="flex items-center justify-between"><span>Supabase &amp; MongoDB</span><span class="text-slate-500">Realtime</span></div>
+        </div>
+      </div>
+
+      <!-- Card 3: Frontend Systems -->
+      <div class="glass-card p-6 rounded-2xl border border-white/10 flex flex-col justify-between hover:border-purple-500/40 transition">
+        <div>
+          <div class="h-10 w-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-4">
+            <i class="fa-solid fa-layer-group text-sm"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2 font-display">Frontend Systems</h3>
+          <p class="text-xs text-slate-400 leading-relaxed mb-4">
+            Reactive telemetry dashboards, component engines, and geospatial interactive maps.
+          </p>
+        </div>
+        <div class="space-y-1.5 pt-3 border-t border-white/5 font-mono text-xs text-slate-300">
+          <div class="flex items-center justify-between"><span>React &amp; Next.js</span><span class="text-slate-500">Primary</span></div>
+          <div class="flex items-center justify-between"><span>Angular</span><span class="text-slate-500">Enterprise</span></div>
+          <div class="flex items-center justify-between"><span>TypeScript</span><span class="text-slate-500">Strict</span></div>
+          <div class="flex items-center justify-between"><span>Tailwind CSS</span><span class="text-slate-500">Utility</span></div>
+        </div>
+      </div>
+
+      <!-- Card 4: Security & Best Practices -->
+      <div class="glass-card p-6 rounded-2xl border border-white/10 flex flex-col justify-between hover:border-amber-500/40 transition">
+        <div>
+          <div class="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-4">
+            <i class="fa-solid fa-shield-cat text-sm"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2 font-display">Security &amp; Practices</h3>
+          <p class="text-xs text-slate-400 leading-relaxed mb-4">
+            Defensive engineering patterns with uncompromising verification and clean modularity.
+          </p>
+        </div>
+        <div class="space-y-1.5 pt-3 border-t border-white/5 font-mono text-xs text-slate-300">
+          <div class="flex items-center justify-between"><span>RBAC &amp; PoLP</span><span class="text-slate-500">Access</span></div>
+          <div class="flex items-center justify-between"><span>SOLID Principles</span><span class="text-slate-500">Design</span></div>
+          <div class="flex items-center justify-between"><span>Domain Driven Design</span><span class="text-slate-500">Scale</span></div>
+          <div class="flex items-center justify-between"><span>Microservices</span><span class="text-slate-500">Decoupled</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- END: TechnicalArsenalSection -->
+
+  <!-- BEGIN: CertificationsSection -->
+  <section class="relative z-10 py-16 px-4 max-w-6xl mx-auto" data-purpose="certifications" id="certifications">
+    <!-- Header -->
+    <div class="mb-10">
+      <span class="text-[11px] font-mono tracking-widest uppercase text-slate-500 block mb-1">CREDENTIALS</span>
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white font-display">Certifications &amp; recognition</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Cert 1: Google Cloud Foundations -->
+      <div class="glass-card p-6 sm:p-7 rounded-2xl border border-white/10 relative overflow-hidden group hover:border-blue-500/40 transition">
+        <div class="flex items-start justify-between">
+          <div class="h-12 w-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-xl">
+            <i class="fa-brands fa-google"></i>
+          </div>
+          <span class="text-xs font-mono bg-blue-500/10 text-blue-300 border border-blue-500/20 px-3 py-1 rounded-full">
+            Valid thru May 2026
+          </span>
+        </div>
+        <div class="mt-5">
+          <h3 class="text-xl font-bold text-white tracking-tight font-display">
+            Google Cloud Computing Foundations Certificate
+          </h3>
+          <p class="text-xs font-mono text-slate-400 mt-1">Issued by Google Cloud Training</p>
+          <p class="mt-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Completed exhaustive curriculum encompassing Cloud Infrastructure, Cloud Core Services, Data Processing Pipelines, and Security &amp; IAM governance.
+          </p>
+          <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono">
+            <span class="text-slate-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-award text-amber-400"></i> 8 Official Google Skill Badges
+            </span>
+            <span class="text-slate-500">ID: GCCF-COL-892</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cert 2: Ruta IA Sin Limites -->
+      <div class="glass-card p-6 sm:p-7 rounded-2xl border border-white/10 relative overflow-hidden group hover:border-purple-500/40 transition">
+        <div class="flex items-start justify-between">
+          <div class="h-12 w-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-xl">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <span class="text-xs font-mono bg-purple-500/10 text-purple-300 border border-purple-500/20 px-3 py-1 rounded-full">
+            Alcaldía de Medellín
+          </span>
+        </div>
+        <div class="mt-5">
+          <h3 class="text-xl font-bold text-white tracking-tight font-display">
+            Ruta de Aprendizaje de IA Sin Límites
+          </h3>
+          <p class="text-xs font-mono text-slate-400 mt-1">Innovation &amp; Digital Talent Initiative</p>
+          <p class="mt-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Specialized track covering modern machine learning workflows, API integration with contemporary foundational LLMs, prompt telemetry, and automated data pipelines.
+          </p>
+          <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono">
+            <span class="text-slate-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-network-wired text-purple-400"></i> Applied AI &amp; Model Architectures
+            </span>
+            <span class="text-slate-500">Verified Distinction</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- END: CertificationsSection -->
+
+  <!-- BEGIN: ContactFooterSection -->
+  <section class="relative z-10 pt-20 pb-16 px-4 max-w-6xl mx-auto" data-purpose="contact-section" id="contact">
+    <!-- Big Contact Hero Banner -->
+    <div class="rounded-3xl glass-card border border-white/10 p-8 sm:p-14 relative overflow-hidden text-center md:text-left">
+      <!-- Glow effect -->
+      <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative z-10">
+        <div class="md:col-span-8">
+          <span class="text-xs font-mono tracking-widest uppercase text-blue-400 block mb-2">AVAILABILITY 2025</span>
+          <h2 class="text-3xl sm:text-5xl font-bold text-white tracking-tight font-display leading-tight">
+            Let's build something <br class="hidden sm:block"/>
+            remarkable together.
+          </h2>
+          <p class="mt-4 text-sm sm:text-base text-slate-400 max-w-xl">
+            Currently open to high-impact software engineering roles, distributed systems consulting, and backend architecture contracts.
+          </p>
+        </div>
+
+        <div class="md:col-span-4 flex flex-col gap-3 justify-center">
+          <a class="w-full flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl bg-white text-black font-semibold text-sm hover:bg-slate-200 transition-all shadow-xl group" href="mailto:juandaduran3030@gmail.com">
+            <i class="fa-regular fa-paper-plane group-hover:translate-x-0.5 transition-transform"></i>
+            <span>Send Direct Message</span>
+          </a>
+          
+          <button class="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl glass-card border border-white/10 text-xs font-mono text-slate-300 hover:text-white transition" onclick="copyEmailToClipboard('juandaduran3030@gmail.com')">
+            <i class="fa-regular fa-copy text-slate-400"></i>
+            <span>Copy: juandaduran3030@gmail.com</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Minimal Bottom Footer -->
+    <footer class="mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500" data-purpose="site-footer">
+      <div class="flex items-center gap-2">
+        <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+        <span class="text-slate-400">Available for engineering roles</span>
+      </div>
+
+      <div>
+        <span>Designed &amp; Architected by Juan Durán</span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <a class="hover:text-white transition" href="#work">Work</a>
+        <a class="hover:text-white transition" href="#experience">Experience</a>
+        <a class="hover:text-white transition" href="#stack">Stack</a>
+        <a class="hover:text-white transition" href="#certifications">Certifications</a>
+        <a class="hover:text-white transition" href="https://www.linkedin.com/in/duranpx" rel="noopener noreferrer" target="_blank">LinkedIn</a>
+        <a class="hover:text-white transition" href="https://github.com/DuranPX" rel="noopener noreferrer" target="_blank">GitHub</a>
+      </div>
+    </footer>
+  </section>
+  <!-- END: ContactFooterSection -->
+
+  <!-- JavaScript: Carousels, Image Switching & Notifications -->
+  <script>
+    // Project Carousel Logic: Enables image switching via next/prev buttons, dots, or touch
+    document.addEventListener('DOMContentLoaded', () => {
+      const carousels = document.querySelectorAll('.project-carousel');
+
+      carousels.forEach((carousel) => {
+        const slides = carousel.querySelectorAll('.slide');
+        const counter = carousel.querySelector('.slide-counter');
+        const dots = carousel.querySelectorAll('.dot');
+        const prevBtn = carousel.querySelector('.carousel-prev');
+        const nextBtn = carousel.querySelector('.carousel-next');
+        const total = slides.length;
+        let currentIndex = parseInt(carousel.getAttribute('data-current-slide') || '0', 10);
+
+        function updateSlide(newIndex) {
+          if (newIndex < 0) newIndex = total - 1;
+          if (newIndex >= total) newIndex = 0;
+          currentIndex = newIndex;
+          carousel.setAttribute('data-current-slide', currentIndex);
+
+          slides.forEach((slide, i) => {
+            if (i === currentIndex) {
+              slide.classList.remove('opacity-0', 'pointer-events-none', 'z-0');
+              slide.classList.add('opacity-100', 'z-10');
+            } else {
+              slide.classList.remove('opacity-100', 'z-10');
+              slide.classList.add('opacity-0', 'pointer-events-none', 'z-0');
+            }
+          });
+
+          if (counter) {
+            counter.textContent = `${currentIndex + 1} / ${total}`;
+          }
+
+          dots.forEach((dot, i) => {
+            if (i === currentIndex) {
+              dot.classList.add('bg-white', 'w-3');
+              dot.classList.remove('bg-white/40', 'w-1.5');
+            } else {
+              dot.classList.remove('bg-white', 'w-3');
+              dot.classList.add('bg-white/40', 'w-1.5');
+            }
+          });
+        }
+
+        if (prevBtn) {
+          prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateSlide(currentIndex - 1);
+          });
+        }
+
+        if (nextBtn) {
+          nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateSlide(currentIndex + 1);
+          });
+        }
+
+        dots.forEach((dot) => {
+          dot.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const targetIdx = parseInt(dot.getAttribute('data-index') || '0', 10);
+            updateSlide(targetIdx);
+          });
+        });
+
+        // Touch swipe support
+        let startX = 0;
+        carousel.addEventListener('touchstart', (e) => {
+          startX = e.changedTouches[0].clientX;
+        }, { passive: true });
+
+        carousel.addEventListener('touchend', (e) => {
+          const diff = e.changedTouches[0].clientX - startX;
+          if (Math.abs(diff) > 40) {
+            if (diff > 0) updateSlide(currentIndex - 1);
+            else updateSlide(currentIndex + 1);
+          }
+        }, { passive: true });
+      });
+    });
+
+    // Elegant Toast Notification
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = 'glass-card border border-white/20 text-white text-xs font-mono px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 transform transition-all duration-300 translate-y-4 opacity-0 pointer-events-auto';
+      toast.innerHTML = `
+        <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+
+      // Animate in
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-4', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+      });
+
+      // Animate out
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-4', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 2600);
+    }
+
+    // Copy to clipboard helper
+    function copyEmailToClipboard(email) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(email).then(() => {
+          showToast(`Copied to clipboard: ${email}`);
+        }).catch(() => {
+          showToast(`Email: ${email}`);
+        });
+      } else {
+        showToast(`Email: ${email}`);
+      }
+    }
+  </script>
+</body>
+</html>

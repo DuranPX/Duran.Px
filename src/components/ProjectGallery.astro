@@ -1,0 +1,76 @@
+---
+import type { ProjectImage } from "../data/projects";
+import { attr, ui } from "../i18n";
+import Plate from "./Plate.astro";
+import T from "./T.astro";
+
+interface Props {
+  id: string;
+  title: string;
+  images: (ProjectImage & { captionEn?: string })[];
+}
+const { id, title, images } = Astro.props;
+const many = images.length > 1;
+const first = images[0];
+---
+
+<div
+  class="carousel"
+  data-carousel
+  role="region"
+  aria-roledescription={many ? "carrusel" : undefined}
+  {...attr("aria-label", `${ui.shots.es} ${title}`, `${ui.shots.en} ${title}`)}
+>
+  <ul
+    class="carousel__track"
+    id={`track-${id}`}
+    tabindex={many ? 0 : undefined}
+    {...(many ? attr("aria-label", ui.swipe.es, ui.swipe.en) : {})}
+  >
+    {images.map((image, index) => (
+      <li
+        class="carousel__slide"
+        aria-roledescription={many ? "diapositiva" : undefined}
+        {...(many ? attr("aria-label", `${index + 1} ${ui.of.es} ${images.length}`, `${index + 1} ${ui.of.en} ${images.length}`) : {})}
+        data-caption={image.caption}
+        data-caption-en={image.captionEn ?? image.caption}
+      >
+        <figure style="margin:0">
+          {image.src ? (
+            <img
+              class:list={["carousel__img", image.fit === "contain" && "carousel__img--contain"]}
+              src={image.src}
+              {...attr("alt", image.alt, image.captionEn ? `${title}: ${image.captionEn}` : image.alt)}
+              width={image.width ?? 1600}
+              height={image.height ?? 1000}
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <Plate title={title} caption={image.caption} captionEn={image.captionEn} />
+          )}
+          <figcaption class="sr-only"><T es={image.caption} en={image.captionEn} /></figcaption>
+        </figure>
+      </li>
+    ))}
+  </ul>
+  <div class="carousel__bar">
+    <p class="carousel__caption" aria-live="polite" data-caption-out>
+      {first && <T es={first.caption} en={first.captionEn} />}
+    </p>
+    {many && (
+      <div class="carousel__controls">
+        <div class="carousel__dots" aria-hidden="true">
+          {images.map((_, i) => <span data-active={i === 0 ? "" : undefined} />)}
+        </div>
+        <button class="carousel__btn" type="button" data-prev aria-controls={`track-${id}`} {...attr("aria-label", ui.prevShot.es, ui.prevShot.en)} disabled>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg>
+        </button>
+        <span class="carousel__count" data-count>1 / {images.length}</span>
+        <button class="carousel__btn" type="button" data-next aria-controls={`track-${id}`} {...attr("aria-label", ui.nextShot.es, ui.nextShot.en)}>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true"><path d="m6 3 5 5-5 5" /></svg>
+        </button>
+      </div>
+    )}
+  </div>
+</div>

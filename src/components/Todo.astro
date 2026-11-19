@@ -1,0 +1,7 @@
+---
+/** Marca visible solo en `npm run dev` para señalar contenido por reemplazar. */
+interface Props { label: string; }
+const { label } = Astro.props;
+const show = import.meta.env.DEV;
+---
+{show && <span class="todo" title="Visible solo en desarrollo">Reemplazar · {label}</span>}

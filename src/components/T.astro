@@ -1,0 +1,15 @@
+---
+/**
+ * Texto bilingüe. Emite el español y, si existe, el inglés en el HTML estático.
+ * El CSS oculta el idioma inactivo según `data-lang` en <html>; sin JavaScript se ve el español.
+ */
+interface Props {
+  es: string;
+  en?: string;
+}
+const { es, en } = Astro.props;
+const bilingual = Boolean(en) && en !== es;
+---
+{bilingual ? (
+  <><span data-l="es">{es}</span><span data-l="en" lang="en">{en}</span></>
+) : es}

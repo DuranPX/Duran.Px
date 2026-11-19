@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <!-- REEMPLAZAR: marcador. Usa una foto cuadrada (1:1, min. 1000x1000) en public/images/portrait.webp y actualiza src/data/profile.ts -->
+  <defs>
+    <radialGradient id="l" cx="60%" cy="28%" r="75%"><stop offset="0" stop-color="#3a352d"/><stop offset=".55" stop-color="#1f201d"/><stop offset="1" stop-color="#141513"/></radialGradient>
+    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2d2c28"/><stop offset="1" stop-color="#1a1b19"/></linearGradient>
+  </defs>
+  <rect width="1000" height="1000" fill="url(#l)"/>
+  <g fill="url(#s)">
+    <ellipse cx="500" cy="420" rx="150" ry="180"/>
+    <path d="M170 1000c20-230 160-360 330-360s310 130 330 360z"/>
+  </g>
+</svg>

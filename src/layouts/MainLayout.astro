@@ -1,0 +1,99 @@
+---
+import { profile } from "../data/profile";
+import "../styles/site.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = `${profile.name} | Desarrollo de software y aplicaciones web`,
+  description = "Portafolio de Juan Durán, estudiante de Ingeniería en la Universidad de Caldas. Proyectos de desarrollo web, APIs, backend, seguridad y bases de datos.",
+  noindex = false,
+} = Astro.props;
+
+const canonicalUrl = Astro.site ? new URL("/", Astro.site).href : undefined;
+const ogImage = Astro.site ? new URL("/social-card.svg", Astro.site).href : "/social-card.svg";
+
+const sameAs = [profile.github, profile.linkedin, profile.credly].filter(Boolean);
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  ...(canonicalUrl ? { url: canonicalUrl } : {}),
+  mainEntity: {
+    "@type": "Person",
+    name: profile.name,
+    alternateName: [profile.handle, "duranpx"],
+    description: profile.intro,
+    ...(canonicalUrl ? { url: canonicalUrl } : {}),
+    ...(!profile.portrait.isPlaceholder && Astro.site
+      ? { image: new URL(profile.portrait.src, Astro.site).href }
+      : {}),
+    affiliation: { "@type": "CollegeOrUniversity", name: profile.university },
+    address: { "@type": "PostalAddress", addressLocality: "Manizales", addressCountry: "CO" },
+    sameAs,
+  },
+};
+---
+
+<!doctype html>
+<html lang="es-CO" class="no-js">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        root.classList.replace("no-js", "js");
+        let theme;
+        try { theme = localStorage.getItem("theme"); } catch {}
+        if (theme !== "light" && theme !== "dark") {
+          theme = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
+        root.dataset.theme = theme;
+        // Idioma: preferencia guardada; si no hay, inglés solo cuando el navegador no está en español
+        let lang;
+        try { lang = localStorage.getItem("lang"); } catch {}
+        if (lang !== "es" && lang !== "en") {
+          lang = /^es\b/i.test(navigator.language || "es") ? "es" : "en";
+        }
+        root.dataset.lang = lang;
+        root.lang = lang === "en" ? "en" : "es-CO";
+      })();
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    <meta name="theme-color" content="#0b0c0b" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ece8df" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta name="title-en" content="Juan Durán | Software and web application development" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content="Juan Durán — Desarrollo de software y aplicaciones web" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400&family=Instrument+Sans:wght@400;500&display=swap"
+    />
+    <link rel="preconnect" href="https://skillicons.dev" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido"><span data-l="es">Saltar al contenido</span><span data-l="en" lang="en">Skip to content</span></a>
+    <slot />
+  </body>
+</html>

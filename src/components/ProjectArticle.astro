@@ -1,0 +1,84 @@
+---
+import type { Project } from "../data/projects";
+import { projectsEn, statusEn } from "../i18n/en";
+import { ui } from "../i18n";
+import ProjectGallery from "./ProjectGallery.astro";
+import Todo from "./Todo.astro";
+import T from "./T.astro";
+
+interface Props {
+  project: Project;
+  index: number;
+}
+const { project: p, index } = Astro.props;
+const en = projectsEn[p.id];
+const numeral = ["I", "II", "III", "IV", "V", "VI"][index] ?? String(index + 1);
+const needsContribution = p.contribution.includes("REEMPLAZAR");
+const contribution = p.contribution.replace(/\s*REEMPLAZAR:.*$/, "").trim();
+const hasDetails = p.architecture || p.learnings || p.limitations;
+const gallery = p.gallery.map((img, i) => ({ ...img, captionEn: en?.captions[i] }));
+---
+
+<article class="project" id={`proyecto-${p.id}`} aria-labelledby={`t-${p.id}`}>
+  <div class="project__media" data-reveal>
+    <ProjectGallery id={p.id} title={p.title} images={gallery} />
+  </div>
+
+  <div class="project__text" data-reveal style="--delay:.1s">
+    <div class="project__top">
+      <span class="meta" aria-hidden="true">{numeral}</span>
+      <span class="status"><T es={p.status} en={statusEn[p.status]} /></span>
+      <span class="meta"><T es={p.category} en={en?.category} /></span>
+    </div>
+
+    <p class="project__stack">
+      <span class="sr-only"><T {...ui.technologies} />: </span>{p.technologies.slice(0, 5).join(" · ")}
+    </p>
+    <h3 class="project__title" id={`t-${p.id}`}>{p.title}</h3>
+    <p class="project__summary"><T es={p.summary} en={en?.summary} /></p>
+
+    <dl class="brief rail">
+      <div><dt><T {...ui.problem} /></dt><dd><T es={p.brief.problem} en={en?.brief.problem} /></dd></div>
+      <div><dt><T {...ui.solution} /></dt><dd><T es={p.brief.solution} en={en?.brief.solution} /></dd></div>
+      <div><dt><T {...ui.challenge} /></dt><dd><T es={p.brief.challenge} en={en?.brief.challenge} /></dd></div>
+      <div><dt><T {...ui.outcome} /></dt><dd><T es={p.brief.outcome} en={en?.brief.outcome} /></dd></div>
+    </dl>
+
+    <div class="project__block">
+      <h4><T {...ui.myRole} /></h4>
+      {contribution && <p><T es={contribution} en={en?.contribution} /></p>}
+      {needsContribution && <Todo label="tu participación (projects.ts y en.ts)" />}
+    </div>
+
+    <details class="details">
+      <summary>
+        <T {...ui.learnMore} />
+        <span class="details__icon" aria-hidden="true"></span>
+      </summary>
+      <div class="details__body">
+        <div class="project__block"><h4><T {...ui.context} /></h4><p><T es={p.context} en={en?.context} /></p></div>
+        <div class="project__block">
+          <h4><T {...ui.builtSolution} /></h4>
+          <ul class="project__list">{p.solution.map((s, i) => <li><T es={s} en={en?.solution[i]} /></li>)}</ul>
+        </div>
+        {p.architecture && (
+          <div class="project__block"><h4><T {...ui.architecture} /></h4><p><T es={p.architecture} en={en?.architecture} /></p></div>
+        )}
+        {p.learnings && (
+          <div class="project__block"><h4><T {...ui.learnings} /></h4><p><T es={p.learnings} en={en?.learnings} /></p></div>
+        )}
+        {p.limitations && (
+          <div class="project__block"><h4><T {...ui.limitations} /></h4><p><T es={p.limitations} en={en?.limitations} /></p></div>
+        )}
+        {!hasDetails && <Todo label="arquitectura, retos y estado" />}
+      </div>
+    </details>
+
+    <div class="project__links">
+      {p.repositoryUrl && !p.repositoryPrivate && <a class="link-line ext" href={p.repositoryUrl} target="_blank" rel="noopener noreferrer"><T {...ui.repoOf} /> {p.title}</a>}
+      {p.repositoryPrivate && <span class="meta project__private"><T {...ui.privateRepo} /></span>}
+      {p.demoUrl && <a class="link-line ext" href={p.demoUrl} target="_blank" rel="noopener noreferrer"><T {...ui.demoOf} /> {p.title}</a>}
+      {!p.repositoryUrl && !p.demoUrl && <Todo label="repositorio o demo, si es público" />}
+    </div>
+  </div>
+</article>
